@@ -1,0 +1,35 @@
+name: Deploy translator-cli
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-linux:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+    - name: Setup Python
+      uses: actions/setup-python@v6
+      with:
+          python-version: '3.13'
+    - name: Install Requirements
+      run: |
+          sudo apt-get update
+          sudo apt-get -y install libopenblas-dev
+    - name: Build translator-cli
+      env:
+          ALLOW_RUN_ON_HOST: "1"
+      run: |
+          python inference/scripts/build.py
+          strip inference/build/src/app/translator-cli
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+          name: translator-cli
+          path: inference/build/src/app/translator-cli
