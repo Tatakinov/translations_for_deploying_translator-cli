@@ -67,6 +67,23 @@ MACRO(CHECK_ALL_LIBRARIES LIBRARIES INCLUDE _prefix _name _flags _list _include 
       MARK_AS_ADVANCED(${_prefix}_${_library}_LIBRARY)
       IF(${_prefix}_${_library}_LIBRARY)
         GET_FILENAME_COMPONENT(_path ${${_prefix}_${_library}_LIBRARY} PATH)
+        SET(_lapack)
+        IF(APPLE)
+          FIND_LIBRARY(_lapack
+            NAMES lapack
+            PATHS /usr/local/lib /usr/lib /usr/local/lib64 /usr/lib64 /usr/local/opt/openblas/lib ENV
+            DYLD_LIBRARY_PATH
+            )
+        ELSE(APPLE)
+          FIND_LIBRARY(_lapack
+            NAMES lapack
+            PATHS /usr/local/lib /usr/lib /usr/local/lib64 /usr/lib64 ENV
+            LD_LIBRARY_PATH
+            )
+        ENDIF(APPLE)
+        if(_lapack)
+          LIST(APPEND ${_prefix}_${_library}_LIBRARY ${_lapack})
+        ENDIF(_lapack)
         LIST(APPEND _paths ${_path}/../include ${_path}/../../include)
       ENDIF(${_prefix}_${_library}_LIBRARY)
       SET(${LIBRARIES} ${${LIBRARIES}} ${${_prefix}_${_library}_LIBRARY})
@@ -77,7 +94,7 @@ MACRO(CHECK_ALL_LIBRARIES LIBRARIES INCLUDE _prefix _name _flags _list _include 
   # Test include
   SET(_bug_search_include ${_search_include}) #CMAKE BUG!!! SHOULD NOT BE THAT
   IF(_bug_search_include)
-    FIND_PATH(${_prefix}${_combined_name}_INCLUDE ${_include} ${_paths})
+    FIND_PATH(${_prefix}${_combined_name}_INCLUDE ${_include} ${_paths} PATH_SUFFIXES include ${__list})
     MARK_AS_ADVANCED(${_prefix}${_combined_name}_INCLUDE)
     IF(${_prefix}${_combined_name}_INCLUDE)
       MESSAGE(STATUS "Checking for [${__list}] -- includes found")
