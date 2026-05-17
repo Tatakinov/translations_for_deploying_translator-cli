@@ -2,6 +2,7 @@
 
 import argparse
 from glob import glob
+import platform
 import subprocess
 from pathlib import Path
 import multiprocessing
@@ -40,13 +41,18 @@ def run_cmake(test: bool, cuda_toolkit: Optional[Path]):
     else:
         cmake_args.append("-DCOMPILE_CUDA=off")
 
+    if platform.system() == "Windows":
+        cmake_args.append(f"-DCMAKE_INSTALL_PREFIX={BUILD_DIR}")
     subprocess.run(cmake_args, cwd=BUILD_DIR, check=True)
 
 
 def run_make():
     cpus = multiprocessing.cpu_count()
     print(f"[build] Running make with {cpus} CPUs...")
-    subprocess.run(["make", f"-j{cpus}"], cwd=BUILD_DIR, check=True)
+    if platform.system() == "Windows":
+        subprocess.run(["msbuild", "INSTALL.vcxproj", "/t:build", "/p:Configuration=Release", "/p:platform=x64"], cwd=BUILD_DIR, check=True)
+    else:
+        subprocess.run(["make", f"-j{cpus}"], cwd=BUILD_DIR, check=True)
 
 
 def save_archive(archive: Path):
