@@ -56,8 +56,8 @@ jobs:
           ALLOW_RUN_ON_HOST: "1"
           CL: "/utf-8"
           CMAKE_POLICY_VERSION_MINIMUM: "3.5"
-          CMAKE_TOOLCHAIN_FILE: ${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
-          VCPKG_ROOT: ${{ github.workspace }}/vcpkg
+          CMAKE_TOOLCHAIN_FILE: ${{ env.VCPKG_INSTALLATION_ROOT }}/scripts/buildsystems/vcpkg.cmake
+          VCPKG_ROOT: ${{ env.VCPKG_INSTALLATION_ROOT }}
       run: |
           python inference/scripts/build.py
     - name: Upload artifact
