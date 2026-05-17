@@ -31,7 +31,7 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v7
       with:
-          name: translator-cli
+          name: translator-cli-linux
           path: inference/build/src/app/translator-cli
   build-windows:
 
@@ -63,5 +63,7 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v7
       with:
-          name: translator-cli
-          path: inference/build/src/app/Release
+          name: translator-cli-windows
+          path: |
+              inference/build/src/app/Release/*.dll
+              inference/build/src/app/Release/*.exe
