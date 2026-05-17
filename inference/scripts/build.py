@@ -43,6 +43,7 @@ def run_cmake(test: bool, cuda_toolkit: Optional[Path]):
 
     if platform.system() == "Windows":
         cmake_args.append(f"-DCMAKE_INSTALL_PREFIX={BUILD_DIR}")
+        cmake_args.append(f"-DUSE_DOXYGEN=OFF")
     subprocess.run(cmake_args, cwd=BUILD_DIR, check=True)
 
 
