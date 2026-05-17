@@ -29,7 +29,39 @@ jobs:
           python inference/scripts/build.py
           strip inference/build/src/app/translator-cli
     - name: Upload artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
           name: translator-cli
           path: inference/build/src/app/translator-cli
+  build-windows:
+
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+    - name: Setup Python
+      uses: actions/setup-python@v6
+      with:
+          python-version: '3.13'
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v3
+      with:
+        msbuild-architecture: x64
+    - name: Install Requirements
+      run: |
+          vcpkg install openblas blas lapack-reference pcre2
+    - name: Build translator-cli
+      env:
+          ALLOW_RUN_ON_HOST: "1"
+          CL: "/utf-8"
+          CMAKE_POLICY_VERSION_MINIMUM: "3.5"
+          CMAKE_TOOLCHAIN_FILE: ${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
+          VCPKG_ROOT: ${{ github.workspace }}/vcpkg
+      run: |
+          python inference/scripts/build.py
+    - name: Upload artifact
+      uses: actions/upload-artifact@v7
+      with:
+          name: translator-cli
+          path: inference/build/src/app/Release
