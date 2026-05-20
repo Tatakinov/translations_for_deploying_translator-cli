@@ -25,6 +25,7 @@ jobs:
     - name: Build translator-cli
       env:
           ALLOW_RUN_ON_HOST: "1"
+          BUILD_ARCH: "x86-64-v3"
       run: |
           python inference/scripts/build.py
           strip inference/build/src/app/translator-cli
@@ -54,6 +55,7 @@ jobs:
     - name: Build translator-cli
       env:
           ALLOW_RUN_ON_HOST: "1"
+          BUILD_ARCH: "x86-64-v3"
           CL: "/utf-8"
           CMAKE_POLICY_VERSION_MINIMUM: "3.5"
           CMAKE_TOOLCHAIN_FILE: C:/vcpkg/scripts/buildsystems/vcpkg.cmake
